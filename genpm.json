@@ -1,0 +1,38 @@
+{
+  "$": 1,
+  "n": "@core/reviews",
+  "v": "1.0.0",
+  "s": {
+    "en": "Product reviews on @core/comments: verified purchases, photos, labeled imported reviews, ratings and review requests",
+    "es": "Reseñas de producto sobre @core/comments: compra verificada, fotos, importadas etiquetadas, valoraciones y solicitud por email",
+    "pt-BR": "Avaliações de produto sobre @core/comments: compra verificada, fotos, importadas sinalizadas, notas e pedido por e-mail",
+    "fr": "Avis produits sur @core/comments : achat vérifié, photos, avis importés signalés, notes et demande d'avis par e-mail",
+    "de": "Produktbewertungen auf @core/comments: verifizierte Käufe, Fotos, gekennzeichnete Importe, Sterne und Bewertungsanfragen",
+    "ja": "@core/comments 上の商品レビュー：購入確認、写真、出典表示付きインポート、評価、レビュー依頼メール",
+    "zh-CN": "基于 @core/comments 的商品评价：已验证购买、图片、标注来源的导入评价、评分和邀评邮件",
+    "ko": "@core/comments 기반 상품 리뷰: 구매 인증, 사진, 출처 표시된 가져온 리뷰, 평점, 리뷰 요청 메일"
+  },
+  "d": "src/lib/reviews",
+  "l": "MIT",
+  "k": [
+    "ecommerce",
+    "reviews",
+    "ratings",
+    "social-proof",
+    "comments"
+  ],
+  "g": {
+    "@core/comments": "^1.0.0",
+    "@core/catalog": "^1.0.0",
+    "@core/orders": "^1.0.0",
+    "@core/email": "^1.0.1",
+    "@core/jobs": "^1.0.0",
+    "@core/db": "^1.0.0"
+  },
+  "p": {
+    "zod": "^4.0.0"
+  },
+  "e": [
+    "REVIEW_REQUEST_DELAY_DAYS"
+  ]
+}
