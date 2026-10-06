@@ -12,5 +12,5 @@ export {
   registerReviewRequests,
   reviewRequestJob,
   verifiedOrder,
-} from './reviews.js';
-export { reviewMeta, reviewStats } from './schema.js';
+} from './reviews.ts';
+export { reviewMeta, reviewStats } from './schema.ts';

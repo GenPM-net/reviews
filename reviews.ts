@@ -1,13 +1,13 @@
 // Reseñas de producto = comentarios con valoración + compra verificada, fotos, origen y agregados.
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
-import { type Comment, comments, moderate, type ModerationAction, postComment, ratingSummary } from '../comments/index.js';
-import { getProductById, products } from '../catalog/index.js';
-import { type Executor, getDb } from '../db/index.js';
-import { getEmailProvider } from '../email/index.js';
-import { defineJob } from '../jobs/index.js';
-import { onOrderEvent, orderLines, orders } from '../orders/index.js';
-import { reviewMeta, reviewStats } from './schema.js';
+import { type Comment, comments, moderate, type ModerationAction, postComment, ratingSummary } from '../comments/index.ts';
+import { getProductById, products } from '../catalog/index.ts';
+import { type Executor, getDb } from '../db/index.ts';
+import { getEmailProvider } from '../email/index.ts';
+import { defineJob } from '../jobs/index.ts';
+import { onOrderEvent, orderLines, orders } from '../orders/index.ts';
+import { reviewMeta, reviewStats } from './schema.ts';
 
 export const ENTITY = 'product';
 

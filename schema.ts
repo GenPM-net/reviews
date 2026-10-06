@@ -1,7 +1,7 @@
 // Tablas de @core/reviews. Las reseñas son comentarios (@core/comments) con valoración; aquí solo sus datos extra.
 import { boolean, integer, jsonb, pgTable, text } from 'drizzle-orm/pg-core';
-import { comments } from '../comments/index.js';
-import { timestamps } from '../db/index.js';
+import { comments } from '../comments/index.ts';
+import { timestamps } from '../db/index.ts';
 
 export const reviewMeta = pgTable('review_meta', {
   commentId: text('comment_id')
