@@ -3,7 +3,8 @@
 ## Purpose
 Product reviews built on @core/comments (no duplicate comment system): a review is a comment on `product/<id>` with a
 1–5 rating, plus `review_meta` (verified purchase, photos from @core/media, source) and `review_stats` per product.
-"Verified" means the author has a paid and shipped order with that product. Imported reviews are always labeled with
+"Verified" means the signed-in author has a paid and shipped order with that product (by user id or their account's
+verified email); guest reviews are never verified, so the response never reveals whether an email bought. Imported reviews are always labeled with
 their source and never verified. Asks customers for a review N days after delivery.
 
 ## Map

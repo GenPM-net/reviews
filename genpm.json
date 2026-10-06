@@ -1,7 +1,7 @@
 {
   "$": 1,
   "n": "@core/reviews",
-  "v": "1.0.0",
+  "v": "1.0.1",
   "s": {
     "en": "Product reviews on @core/comments: verified purchases, photos, labeled imported reviews, ratings and review requests",
     "es": "Reseñas de producto sobre @core/comments: compra verificada, fotos, importadas etiquetadas, valoraciones y solicitud por email",
@@ -27,7 +27,8 @@
     "@core/orders": "^1.0.0",
     "@core/email": "^1.0.1",
     "@core/jobs": "^1.0.0",
-    "@core/db": "^1.0.0"
+    "@core/db": "^1.0.0",
+    "@core/auth": "^1.1.0"
   },
   "p": {
     "zod": "^4.0.0"

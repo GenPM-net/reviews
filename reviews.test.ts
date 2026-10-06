@@ -47,14 +47,18 @@ async function deliveredOrder(email: string, userId: string | null = null) {
 }
 
 describe('reviews', () => {
-  it('marks verified purchases (by user or guest email) and keeps others unverified', async () => {
+  it('marks verified purchases only for signed-in buyers (user id or verified account email); guests never', async () => {
     const u = await upsertOAuthUser('github', { id: '1', email: null, emailVerified: false, name: 'Ana', avatarUrl: null });
+    const bob = await upsertOAuthUser('github', { id: '2', email: 'bob@x.test', emailVerified: true, name: 'Bob', avatarUrl: null });
     await deliveredOrder('ana@x.test', u.id);
-    await deliveredOrder('bob@x.test');
+    await deliveredOrder('bob@x.test'); // compró como invitado con el email de su cuenta
     const a = await postReview({ productId, rating: 5, body: 'Lovely mug', user: { id: u.id, name: 'Ana' } }, await ctx());
-    const b = await postReview({ productId, rating: 4, body: 'Nice', guest: { name: 'Bob', email: 'BOB@x.test' } }, await ctx());
+    const b = await postReview({ productId, rating: 4, body: 'Nice', user: { id: bob.id, name: 'Bob' } }, await ctx());
     const c = await postReview({ productId, rating: 1, body: 'Never bought it', guest: { name: 'Eve', email: 'eve@x.test' } }, await ctx());
-    expect([a.verified, b.verified, c.verified]).toEqual([true, true, false]);
+    // Un invitado que escribe el email de un comprador no obtiene la insignia ni sabe si ese email compró.
+    const d = await postReview({ productId, rating: 5, body: 'Pretending', guest: { name: 'Mallory', email: 'ana@x.test' } }, await ctx());
+    expect([a.verified, b.verified, c.verified, d.verified]).toEqual([true, true, false, false]);
+    await moderateReview(d.id, 'delete');
     expect((await productRating(productId)).count).toBe(0); // pendientes de moderación
     for (const r of [a, b, c]) await moderateReview(r.id, 'approve');
     expect(await productRating(productId)).toEqual({ count: 3, average: 3.33, histogram: [1, 0, 0, 1, 1] });

@@ -1,6 +1,7 @@
 // Reseñas de producto = comentarios con valoración + compra verificada, fotos, origen y agregados.
-import { and, desc, eq, inArray, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { users } from '../auth/index.ts';
 import { type Comment, comments, moderate, type ModerationAction, postComment, ratingSummary } from '../comments/index.ts';
 import { getProductById, products } from '../catalog/index.ts';
 import { type Executor, getDb } from '../db/index.ts';
@@ -11,10 +12,17 @@ import { reviewMeta, reviewStats } from './schema.ts';
 
 export const ENTITY = 'product';
 
-/** ¿Tiene esta persona un pedido pagado y enviado con el producto? Devuelve el id del pedido. */
-export async function verifiedOrder(productId: string, who: { userId?: string | null; email?: string | null }, db: Executor = getDb()): Promise<string | null> {
-  if (!who.userId && !who.email) return null;
-  const owner = who.userId ? eq(orders.userId, who.userId) : eq(orders.email, who.email!.trim().toLowerCase());
+/**
+ * ¿Tiene este usuario con sesión un pedido pagado y enviado con el producto? Cuenta sus pedidos y los hechos como
+ * invitado con el email (verificado) de su cuenta. Devuelve el id del pedido. Los invitados nunca se verifican: un
+ * email escrito en un formulario no prueba nada y la respuesta revelaría si esa persona compró.
+ */
+export async function verifiedOrder(productId: string, who: { userId?: string | null }, db: Executor = getDb()): Promise<string | null> {
+  if (!who.userId) return null;
+  // @core/auth solo guarda emails verificados por el proveedor de acceso.
+  const [u] = await db.select({ email: users.email }).from(users).where(eq(users.id, who.userId));
+  if (!u) return null;
+  const owner = u.email ? or(eq(orders.userId, who.userId), eq(orders.email, u.email.trim().toLowerCase())) : eq(orders.userId, who.userId);
   const [row] = await db
     .select({ id: orders.id })
     .from(orders)
@@ -40,7 +48,7 @@ export async function productRating(productId: string, db: Executor = getDb()): 
 
 /**
  * Publica una reseña (pasa por moderación según @core/comments). La valoración es obligatoria. Marca compra
- * verificada si procede. `photos` son ids de @core/media ya confirmados.
+ * verificada solo para usuarios con sesión que compraron (nunca para invitados). `photos` son ids de @core/media.
  */
 export async function postReview(
   input: {
@@ -57,7 +65,7 @@ export async function postReview(
   z.number().int().min(1).max(5).parse(input.rating);
   if (!(await getProductById(input.productId, db))) throw new Error('unknown product');
   const c = await postComment({ entityType: ENTITY, entityId: input.productId, body: input.body, rating: input.rating, user: input.user, ...(input.guest && { guest: input.guest }) }, ctx, db);
-  const orderId = await verifiedOrder(input.productId, { userId: input.user?.id, email: input.guest?.email }, db);
+  const orderId = input.user ? await verifiedOrder(input.productId, { userId: input.user.id }, db) : null;
   await db.insert(reviewMeta).values({ commentId: c.id, productId: input.productId, verified: !!orderId, orderId, photos: (input.photos ?? []).slice(0, 6) });
   await recomputeStats(input.productId, db);
   return { ...c, verified: !!orderId };
